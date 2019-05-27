@@ -1,0 +1,5 @@
+# ignore all images
+*.ppm
+
+# ignore all csv files
+*.csv
