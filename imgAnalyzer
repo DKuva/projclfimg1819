@@ -1,0 +1,90 @@
+import cv2 as cv
+import numpy as np
+
+class imgAnalyzer():
+
+    def __init__(self):
+        self.signData = 0
+
+    def getColourCode(self,workImg):
+        
+        green = np.uint8([[[0,255,0 ]]])
+        hsv_green = cv.cvtColor(green,cv.COLOR_BGR2HSV)
+        print(hsv_green)
+        green = np.uint8([[[255,0,0 ]]])
+        hsv_green = cv.cvtColor(green,cv.COLOR_BGR2HSV)
+        print(hsv_green)
+        green = np.uint8([[[0,0,255 ]]])
+        hsv_green = cv.cvtColor(green,cv.COLOR_BGR2HSV)
+        print(hsv_green)
+        green = np.uint8([[[255,255,0 ]]])
+        hsv_green = cv.cvtColor(green,cv.COLOR_BGR2HSV)
+        print(hsv_green)
+
+        red = 0 
+        blue = 0
+        green = 0
+        yellow = 0
+        for i in range(workImg.shape[0]):
+            for j in range(workImg.shape[1]):
+                if (workImg[i,j,0] > 340 or workImg[i,j,0] < 20): red += 1
+                if (workImg[i,j,0] > 170 and workImg[i,j,0] < 250): blue += 1
+                if (workImg[i,j,0] > 100 and workImg[i,j,0] < 140): green += 1
+                if (workImg[i,j,0] > 30 and workImg[i,j,0] < 90): yellow += 1
+                                
+        area = workImg.shape[0]*workImg.shape[1]
+        list = [red/area, blue/area, green/area, yellow/area]
+        colourCode = 0
+        if (red/area == max(list)): colourCode = 1
+        if (blue/area == max(list)): colourCode = 2
+        if (green/area == max(list)): colourCode = 3
+        if (yellow/area == max(list)): colourCode = 4
+        print(str(red/area) +' '+ str(blue/area) + ' ' +str(green/area) + ' ' +str(yellow/area)+ ' ' +str(colourCode))
+        return(colourCode)
+
+    def getShapeCode(self,workImg,colourCode):
+        low_blue = np.array([110,50,50])
+        up_blue = np.array([130,255,255])
+        low_red = np.array([0,50,50])
+        up_red = np.array([30,255,255])
+        low_green = np.array([50,50,50])
+        up_green = np.array([70,255,255])
+        low_yellow = np.array([80,50,50])
+        up_yellow = np.array([109,255,255])
+
+        if (colourCode == 0): print("cannot detect sign, colourCode = 0")
+        if (colourCode == 1): mask = cv.inRange(workImg, low_red, up_red)
+        if (colourCode == 2): mask = cv.inRange(workImg, low_blue, up_blue)
+        if (colourCode == 3): mask = cv.inRange(workImg, low_green, up_green)
+        if (colourCode == 4): mask = cv.inRange(workImg, low_yellow, up_yellow)
+        
+        res = cv.bitwise_and(workImg,workImg, mask= mask)
+        M = cv.moments(mask)
+        cX = int(M["m10"]/M["m00"])
+        cY = int(M["m01"]/M["m00"])
+        shapeCode = M["mu11"]
+        shift = int(workImg.shape[0]*0.3)
+        bw_img = cv.cvtColor(workImg, cv.COLOR_BGR2GRAY)
+        _,img_thresh = cv.threshold(bw_img, 0, 50, cv.THRESH_OTSU)       
+        M2 = cv.moments(img_thresh)
+
+        cv.imshow('res',res)
+        print (colourCode)
+        print(M["mu11"])
+        print(M2["mu11"])
+        shapeCode = 0
+        cv.waitKey(0)
+        return(shapeCode)
+
+    def analyzeImg(self,workImg):
+        workImg = cv.cvtColor(workImg, cv.COLOR_BGR2HSV)
+        colourCode = self.getColourCode(workImg)
+        shapeCode = self.getShapeCode(workImg,colourCode)
+        print("Analyzing...")
+        return(0)
+
+imgA = imgAnalyzer()
+workImg = cv.imread('img1.PNG',cv.IMREAD_COLOR)
+cv.imshow('workImg',workImg)
+imgA.analyzeImg(workImg)
+cv.waitKey(0)
