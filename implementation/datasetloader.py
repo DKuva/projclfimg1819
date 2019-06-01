@@ -64,7 +64,7 @@ def get_images_and_labels(datadir,train_data,imtype=-1,bgr2rgb=False,resolution=
 
   
 train_data = True
-datadir="../data/train_images"
+datadir=os.path.join('data','train_images')
 imtype=-1
 bgr2rgb=True
 resolution=(128,128)
@@ -78,7 +78,7 @@ print(len(l), len(t),l[2])
 plt.imshow(t[50],cmap='gray')
 plt.show()
 
-
+imgCount = 0
 for img in t:
     print(str(imgCount))
     #imgAnal.analyzeImg(img)
