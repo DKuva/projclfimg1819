@@ -79,7 +79,11 @@ plt.imshow(t[50],cmap='gray')
 plt.show()
 
 
-
+for img in t:
+    print(str(imgCount))
+    #imgAnal.analyzeImg(img)
+    brute_force(t[0],img)
+    imgCount += 1
 
 
 
