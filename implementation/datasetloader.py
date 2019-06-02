@@ -79,7 +79,17 @@ plt.imshow(t[50],cmap='gray')
 plt.show()
 
 
+imgCount = 0
+flagCount = 0
 
+for img in t:
+    print(str(imgCount))
+    #imgAnal.analyzeImg(img)
+    flag = brute_force(t[0] ,img, 10)
+    if (flag): flagCount += 1
+    imgCount += 1
+
+print('BFM prepoznao ' +str(flagCount)+' od '+str(len(t))+'znakova')
 
 
 
